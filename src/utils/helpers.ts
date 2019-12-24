@@ -1,5 +1,5 @@
 import { Observable, merge } from 'rxjs';
-import { MyNews, NewsAPI } from 'src/news/interfaces/news';
+import { MyNews } from 'src/news/interfaces/news';
 import { reduce } from 'rxjs/operators';
 
 interface ErrorMessage {
