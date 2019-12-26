@@ -5,7 +5,7 @@ import {
   UsePipes,
   Get,
   UseGuards,
-  Request,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDto } from './dto/users.dto';
@@ -15,6 +15,7 @@ import { ValidationRegisterPipe } from './pipes/register.pipe';
 import { Users } from './entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../auth/auth.service';
+import { Request } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -41,8 +42,8 @@ export class UsersController {
     return this.userService.singup(user);
   }
   @UseGuards(AuthGuard('local'))
-  @Post('/prueba')
-  async logg(@Request() req: any) {
+  @Post('/login')
+  async logg(@Req() req: Request): Promise<{}> {
     return this.authService.login(req.user);
   }
 }

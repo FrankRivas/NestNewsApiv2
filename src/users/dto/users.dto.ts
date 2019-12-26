@@ -1,6 +1,10 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsNumber } from 'class-validator';
 
 export class UserDto {
+  @IsOptional()
+  @IsNumber()
+  id: number;
+
   @IsNotEmpty()
   @IsString()
   username: string;
@@ -9,8 +13,9 @@ export class UserDto {
   @IsString()
   password: string;
 
-  constructor(username: string, password: string) {
+  constructor(username: string, password: string, id: number) {
     this.username = username;
     this.password = password;
+    this.id = id;
   }
 }

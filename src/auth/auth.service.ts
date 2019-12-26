@@ -1,14 +1,40 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  HttpException,
+} from '@nestjs/common';
 import { RegistredUsers } from 'src/users/collections/users';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Users } from '../users/entities/user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService: JwtService) {}
-  async validateUser(username: string, pass: string): Promise<any> {
-    const userDB = RegistredUsers.find(a => a.username === username);
+  constructor(
+    private readonly jwtService: JwtService,
+    @InjectRepository(Users)
+    private readonly userRepository: Repository<Users>,
+  ) {}
+  async validateUser(username: string, pass: string): Promise<{}> {
+    let userDB: Users | undefined;
+    try {
+      userDB = await this.userRepository.findOne({
+        where: [{ username: username }],
+      }); //const userDB = RegistredUsers.find(a => a.username === username);
+    } catch (error) {
+      throw new HttpException('', error);
+    }
     if (userDB) {
-      if (userDB.password === pass) {
+      let comparation = false;
+      try {
+        comparation = await bcrypt.compare(pass, userDB.password);
+      } catch (error) {
+        throw new HttpException('', error);
+      }
+      //if (userDB.password === pass) {
+      if (comparation) {
         const { password, ...result } = userDB;
         return result;
       } else {
