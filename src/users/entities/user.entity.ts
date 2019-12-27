@@ -1,9 +1,16 @@
-import { Entity, Column, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  Unique,
+  OneToMany,
+} from 'typeorm';
+import { NewToUser } from './usernews.entity';
 
 @Entity()
 export class Users {
   constructor(
-    id: string,
+    id: number,
     username: string,
     password: string,
     email: string,
@@ -22,7 +29,7 @@ export class Users {
     this.isActive = isActive;
   }
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column({ length: 30, unique: true, nullable: false })
   @Unique('Duplicate username', ['username'])
@@ -46,4 +53,10 @@ export class Users {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @OneToMany(
+    type => NewToUser,
+    newToUser => newToUser.user,
+  )
+  public newsToUser!: NewToUser[];
 }

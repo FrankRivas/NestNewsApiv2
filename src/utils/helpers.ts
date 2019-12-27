@@ -2,12 +2,6 @@ import { Observable, merge } from 'rxjs';
 import { MyNews } from 'src/news/interfaces/news';
 import { reduce } from 'rxjs/operators';
 
-interface ErrorMessage {
-  statusCode: number;
-  error: string;
-  message: string;
-}
-
 export enum codes {
   'OK' = 200,
   'CREATED' = 201,
@@ -20,14 +14,6 @@ export enum codes {
   'CONFLICT' = 409,
   'INTERNAL SERVER ERROR' = 500,
   'SERVIDE UNAVAILABLE' = 503,
-}
-
-export function generateMessage(code: number, message = ''): ErrorMessage {
-  return {
-    statusCode: code,
-    error: codes[code],
-    message,
-  };
 }
 
 export function mergeNews(
