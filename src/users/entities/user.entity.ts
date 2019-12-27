@@ -6,6 +6,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { NewToUser } from './usernews.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Users {
@@ -35,6 +36,7 @@ export class Users {
   @Unique('Duplicate username', ['username'])
   username: string;
 
+  @Exclude()
   @Column({ length: 256, nullable: false })
   password: string;
 

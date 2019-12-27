@@ -4,7 +4,10 @@ import { Users } from './entities/user.entity';
 import { News } from '../news/entities/news.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NewToUser } from './entities/usernews.entity';
-import { UserNewsInterface } from './interfaces/usernews';
+import {
+  UserNewsInterface,
+  UserSharedNewsInterface,
+} from './interfaces/usernews';
 
 @Injectable()
 export class UserNewsService {
@@ -83,5 +86,30 @@ export class UserNewsService {
       where: { id: user },
     });
     return usersNews?.newsToUser.map(this.transformData);
+  }
+
+  transformSharedNews(userNew: NewToUser): UserSharedNewsInterface {
+    const newUser = {
+      shared: userNew.createdAt,
+      to: userNew.user.username,
+      url: userNew.news.url,
+    };
+    return newUser;
+  }
+
+  async getSharedArticles(
+    user: number,
+  ): Promise<UserSharedNewsInterface[] | undefined> {
+    const usersNews = await this.newsToUserRepository.find({
+      join: {
+        alias: 'newsToUser',
+        leftJoinAndSelect: {
+          user: 'newsToUser.user',
+          news: 'newsToUser.news',
+        },
+      },
+      where: { sharedBy: user },
+    });
+    return usersNews.map(this.transformSharedNews);
   }
 }

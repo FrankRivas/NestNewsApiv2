@@ -17,41 +17,26 @@ export class UsersService {
     private readonly userRepository: Repository<Users>,
   ) {}
 
-  async validateUniqueUsername(username: string): Promise<boolean> {
+  async getUserByParam(
+    param: string,
+    value: string | number,
+  ): Promise<Users | undefined> {
     let user: Users | undefined;
     try {
       user = await this.userRepository.findOne({
-        where: [{ username: username }],
+        where: [{ [param]: value }],
       });
     } catch (error) {
       throw new HttpException('', error);
     }
-    if (user) {
-      return true;
-    }
-    return false;
+    return user;
   }
 
-  async validateUniqueEmail(email: string): Promise<boolean> {
-    let user: Users | undefined;
+  async singup(user: RegisterDto): Promise<Users | undefined> {
+    let invalidUsername: Users | undefined;
+    let invalidEmail: Users | undefined;
     try {
-      user = await this.userRepository.findOne({
-        where: [{ email: email }],
-      });
-    } catch (error) {
-      throw new HttpException('', error);
-    }
-    if (user) {
-      return true;
-    }
-    return false;
-  }
-
-  async singup(user: RegisterDto): Promise<Users> {
-    let invalidUsername: boolean;
-    let invalidEmail: boolean;
-    try {
-      invalidUsername = await this.validateUniqueUsername(user.username);
+      invalidUsername = await this.getUserByParam('username', user.username);
     } catch (error) {
       throw new HttpException('', error);
     }
@@ -59,7 +44,7 @@ export class UsersService {
       throw new ConflictException();
     }
     try {
-      invalidEmail = await this.validateUniqueEmail(user.email);
+      invalidEmail = await this.getUserByParam('email', user.email);
     } catch (error) {
       throw new HttpException('', error);
     }
@@ -82,12 +67,7 @@ export class UsersService {
     userId: number,
     pass: string,
   ): Promise<Users | undefined> {
-    let user: Users | undefined;
-    try {
-      user = await this.userRepository.findOne(userId);
-    } catch (error) {
-      throw new HttpException('', error);
-    }
+    const user = await this.getUserByParam('id', userId);
     if (user) {
       try {
         user.password = await bcrypt.hash(pass, 10);
