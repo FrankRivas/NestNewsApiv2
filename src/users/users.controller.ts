@@ -19,6 +19,8 @@ import { ValidationSharePipe } from './pipes/share.pipe';
 import { UserDto } from './dto/users.dto';
 import { SaveNewsDto } from './dto/savenews.dto';
 import { ValidationSaveNewsPipe } from './pipes/savenews.pipe';
+import { PasswordDto } from './dto/password.dto';
+import { ValidationPasswordPipe } from './pipes/password.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -64,5 +66,14 @@ export class UsersController {
     @Param('userId') userId: number,
   ): Promise<{}> {
     return this.userNewService.saveArticle(article.url, article.user, userId);
+  }
+
+  @UsePipes(ValidationPasswordPipe)
+  @Post(':userId/changePassword')
+  changePassword(
+    @Body() pass: PasswordDto,
+    @Param('userId') userId: number,
+  ): Promise<UserDto | undefined> {
+    return this.userService.changePassword(userId, pass.password);
   }
 }

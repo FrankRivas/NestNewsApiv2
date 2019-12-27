@@ -1,4 +1,9 @@
-import { Injectable, HttpException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from './entities/user.entity';
@@ -70,6 +75,28 @@ export class UsersService {
       return this.userRepository.save(user);
     } catch (err) {
       throw new HttpException('', err);
+    }
+  }
+
+  async changePassword(
+    userId: number,
+    pass: string,
+  ): Promise<Users | undefined> {
+    let user: Users | undefined;
+    try {
+      user = await this.userRepository.findOne(userId);
+    } catch (error) {
+      throw new HttpException('', error);
+    }
+    if (user) {
+      try {
+        user.password = await bcrypt.hash(pass, 10);
+        return this.userRepository.save(user);
+      } catch (error) {
+        throw new HttpException('', error);
+      }
+    } else {
+      throw new BadRequestException();
     }
   }
 }
