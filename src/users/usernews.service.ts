@@ -1,4 +1,9 @@
-import { Injectable, HttpException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  BadRequestException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Users } from './entities/user.entity';
 import { News } from '../news/entities/news.entity';
@@ -27,12 +32,16 @@ export class UserNewsService {
   ): Promise<{}> {
     let user: Users | undefined;
     let news: News | undefined;
+    let toUser: Users | undefined;
     try {
       user = await this.userRepository.findOne(userId);
+      if (toUserId) {
+        toUser = await this.userRepository.findOne(toUserId);
+      }
     } catch (error) {
       throw new HttpException('', error);
     }
-    if (!user) {
+    if (!user || (!toUser && toUserId)) {
       throw new BadRequestException();
     }
     try {
@@ -75,16 +84,24 @@ export class UserNewsService {
   }
 
   async getArticles(user: number): Promise<UserNewsInterface[] | undefined> {
-    const usersNews = await this.userRepository.findOne({
-      join: {
-        alias: 'user',
-        leftJoinAndSelect: {
-          newsToUser: 'user.newsToUser',
-          news: 'newsToUser.news',
+    let usersNews: Users | undefined;
+    try {
+      usersNews = await this.userRepository.findOne({
+        join: {
+          alias: 'user',
+          leftJoinAndSelect: {
+            newsToUser: 'user.newsToUser',
+            news: 'newsToUser.news',
+          },
         },
-      },
-      where: { id: user },
-    });
+        where: { id: user },
+      });
+    } catch (error) {
+      throw new HttpException('', error);
+    }
+    if (!usersNews) {
+      throw new UnprocessableEntityException();
+    }
     return usersNews?.newsToUser.map(this.transformData);
   }
 
@@ -100,16 +117,24 @@ export class UserNewsService {
   async getSharedArticles(
     user: number,
   ): Promise<UserSharedNewsInterface[] | undefined> {
-    const usersNews = await this.newsToUserRepository.find({
-      join: {
-        alias: 'newsToUser',
-        leftJoinAndSelect: {
-          user: 'newsToUser.user',
-          news: 'newsToUser.news',
+    let usersNews: NewToUser[];
+    try {
+      usersNews = await this.newsToUserRepository.find({
+        join: {
+          alias: 'newsToUser',
+          leftJoinAndSelect: {
+            user: 'newsToUser.user',
+            news: 'newsToUser.news',
+          },
         },
-      },
-      where: { sharedBy: user },
-    });
+        where: { sharedBy: user },
+      });
+    } catch (error) {
+      throw new HttpException('', error);
+    }
+    if (usersNews.length < 1) {
+      throw new UnprocessableEntityException();
+    }
     return usersNews.map(this.transformSharedNews);
   }
 }
