@@ -77,6 +77,10 @@ SECRET_CODE_JWT=[Your secret token]
 "synchronize": true
 }
 
+## Restore Database
+
+psql [DB name] < database/backup
+
 ## Running the app
 
 ```bash
