@@ -35,3 +35,6 @@ lerna-debug.log*
 
 # VIRTUAL ENVIRONMENT
 .env
+
+# DATABASE CONFIGURATIONS
+ormconfig.json

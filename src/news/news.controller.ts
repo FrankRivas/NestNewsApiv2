@@ -10,17 +10,17 @@ import { NYTNewsService } from './nytnews.service';
 import { NewsAPIService } from './newsapi.service';
 import { Observable } from 'rxjs';
 import { MyNews } from './interfaces/news';
-import { AuthGuard } from 'src/users/users.guard';
+import { AuthGuard } from '@nestjs/passport';
 import { mergeNews } from '../utils/helpers';
 
 @Controller('news')
-//@UseGuards(AuthGuard)
 export class NewsController {
   constructor(
     private readonly newsService: GuardiaNewsService,
     private readonly nytnewsService: NYTNewsService,
     private readonly newsApiService: NewsAPIService,
   ) {}
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   search(
     @Query('searchedWord') searchedWord: string,

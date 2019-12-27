@@ -6,23 +6,22 @@ import {
 } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { UserDto } from './dto/users.dto';
+import { PasswordDto } from '../dto/password.dto';
 
 @Injectable()
-export class ValidationUserPipe implements PipeTransform {
+export class ValidationPasswordPipe implements PipeTransform {
   async transform(
-    value: UserDto,
+    value: PasswordDto,
     { metatype }: ArgumentMetadata,
-  ): Promise<UserDto> {
+  ): Promise<PasswordDto> {
     if (!metatype) {
       return value;
     }
     const object = plainToClass(metatype, value);
+
     const errors = await validate(object);
     if (errors.length) {
-      throw new BadRequestException(
-        'Username and Password are required fields',
-      );
+      throw new BadRequestException('Password is a required field');
     }
     return value;
   }
