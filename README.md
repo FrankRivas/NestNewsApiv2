@@ -113,7 +113,7 @@ In order to access the token generation functionality for querying the api of th
 
 ## Documentation
 
-https://documenter.getpostman.com/view/3221284/SWEDza5c
+https://documenter.getpostman.com/view/3221284/SWLb8UW3
 
 ## Stay in touch
 
