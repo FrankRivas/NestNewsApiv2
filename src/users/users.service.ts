@@ -32,7 +32,7 @@ export class UsersService {
     return user;
   }
 
-  async singup(user: RegisterDto): Promise<Users> {
+  async singup(user: RegisterDto): Promise<Users | undefined> {
     let invalidUsername: Users | undefined;
     let invalidEmail: Users | undefined;
     try {

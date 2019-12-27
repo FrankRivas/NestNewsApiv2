@@ -6,6 +6,8 @@ import {
   Get,
   UseGuards,
   Param,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { RegisterDto } from '../users/dto/register.dto';
@@ -30,9 +32,10 @@ export class UsersController {
     private readonly userNewService: UserNewsService,
   ) {}
 
-  @Post('/signup')
+  @UseInterceptors(ClassSerializerInterceptor)
   @UsePipes(ValidationRegisterPipe)
-  signup(@Body() user: RegisterDto): Promise<Users> {
+  @Post('/signup')
+  signup(@Body() user: RegisterDto): Promise<Users | undefined> {
     return this.userService.singup(user);
   }
 
@@ -68,12 +71,13 @@ export class UsersController {
     return this.userNewService.saveArticle(article.url, article.user, userId);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @UsePipes(ValidationPasswordPipe)
   @Post(':userId/changePassword')
   changePassword(
     @Body() pass: PasswordDto,
     @Param('userId') userId: number,
-  ): Promise<UserDto | undefined> {
+  ): Promise<Users | undefined> {
     return this.userService.changePassword(userId, pass.password);
   }
 
