@@ -3,3 +3,9 @@ export interface UserNewsInterface {
   url: string;
   savedAt: Date;
 }
+
+export interface UserSharedNewsInterface {
+  shared: Date;
+  to: string;
+  url: string;
+}

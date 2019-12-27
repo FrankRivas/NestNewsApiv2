@@ -76,4 +76,10 @@ export class UsersController {
   ): Promise<UserDto | undefined> {
     return this.userService.changePassword(userId, pass.password);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/:userId/shared')
+  sharedArticles(@Param('userId') userId: number): {} {
+    return this.userNewService.getSharedArticles(userId);
+  }
 }
