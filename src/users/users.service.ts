@@ -1,12 +1,4 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  HttpException,
-} from '@nestjs/common';
-//import { User } from './interfaces/users';
-import * as jwt from 'jsonwebtoken';
-import { ConfigService } from '@nestjs/config';
-import { Secret } from 'jsonwebtoken';
+import { Injectable, HttpException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from './entities/user.entity';
@@ -16,32 +8,59 @@ import { RegisterDto } from './dto/register.dto';
 @Injectable()
 export class UsersService {
   constructor(
-    private readonly configService: ConfigService,
     @InjectRepository(Users)
     private readonly userRepository: Repository<Users>,
   ) {}
-  /*login(user: User): string {
-    const secretKey = this.configService.get<Secret>('SECRET_CODE_JWT');
-    const userDB = RegistredUsers.find(a => a.username === user.username);
-    if (userDB) {
-      if (userDB.password === user.password) {
-        const token = jwt.sign(user, secretKey ? secretKey : 'secretKey', {
-          expiresIn: '1h',
-        });
-        return token;
-      } else {
-        // If invalid password
-        throw new UnauthorizedException('Invalid password');
-      }
-    } else {
-      // If user does not exist
-      throw new UnauthorizedException('Invalid user');
+
+  async validateUniqueUsername(username: string): Promise<boolean> {
+    let user: Users | undefined;
+    try {
+      user = await this.userRepository.findOne({
+        where: [{ username: username }],
+      });
+    } catch (error) {
+      throw new HttpException('', error);
     }
+    if (user) {
+      return true;
+    }
+    return false;
   }
-  findAll(): Promise<Users[]> {
-    return this.userRepository.find();
-  }*/
+
+  async validateUniqueEmail(email: string): Promise<boolean> {
+    let user: Users | undefined;
+    try {
+      user = await this.userRepository.findOne({
+        where: [{ email: email }],
+      });
+    } catch (error) {
+      throw new HttpException('', error);
+    }
+    if (user) {
+      return true;
+    }
+    return false;
+  }
+
   async singup(user: RegisterDto): Promise<Users> {
+    let invalidUsername: boolean;
+    let invalidEmail: boolean;
+    try {
+      invalidUsername = await this.validateUniqueUsername(user.username);
+    } catch (error) {
+      throw new HttpException('', error);
+    }
+    if (invalidUsername) {
+      throw new ConflictException();
+    }
+    try {
+      invalidEmail = await this.validateUniqueEmail(user.email);
+    } catch (error) {
+      throw new HttpException('', error);
+    }
+    if (invalidEmail) {
+      throw new ConflictException();
+    }
     try {
       user.password = await bcrypt.hash(user.password, 10);
     } catch (error) {

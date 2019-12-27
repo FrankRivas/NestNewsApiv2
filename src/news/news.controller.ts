@@ -14,7 +14,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { mergeNews } from '../utils/helpers';
 
 @Controller('news')
-//@UseGuards(AuthGuard)
 export class NewsController {
   constructor(
     private readonly newsService: GuardiaNewsService,
