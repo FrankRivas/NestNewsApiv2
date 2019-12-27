@@ -10,13 +10,18 @@
 
 - postman
 - npm v6.12.1
+- pgadmin4
+- postgresql 11
+- restore the backup
+- configure .env file
+- configure ormconfg.json
 
 ## Installation
 
 - Clone the repository
 
 ```bash
-$ git clone https://github.com/FrankRivas/NestNewService.git
+$ git clone https://github.com/FrankRivas/NestNewsApiv2
 ```
 
 - Install dependencies
@@ -47,9 +52,30 @@ GUARDIAN_URL_FILTERS=&order-by=newest&show-fields=byline&show-tags=contributors
 
 GUARDIAN_KEY=[Your secret guardian key API]
 
+#### #NewsAPI Variables
+
+GUARDIAN_URL_BASE=https://newsapi.org/v2/everything?
+
+GUARDIAN_URL_FILTERS=&pageSize=10
+
+GUARDIAN_KEY=[Your secret newsapi key]
+
 #### #JWT Secret
 
 SECRET_CODE_JWT=[Your secret token]
+
+## Configuring ormconfig.json File
+
+{
+"type": "postgres",
+"host": "localhost",
+"port": 5432,
+"username": [Your username],
+"password": [Your password],
+"database": [Your database name],
+"entities": ["dist/**/*.entity{.ts,.js}"],
+"synchronize": true
+}
 
 ## Running the app
 
