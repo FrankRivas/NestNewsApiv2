@@ -1,5 +1,4 @@
 import { Injectable, HttpException, BadRequestException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
 import { Users } from './entities/user.entity';
 import { News } from '../news/entities/news.entity';
@@ -57,7 +56,7 @@ export class UserNewsService {
     };
     try {
       await this.newsToUserRepository.save(ntu);
-      return ntu;
+      return news;
     } catch (error) {
       throw new HttpException('', error);
     }

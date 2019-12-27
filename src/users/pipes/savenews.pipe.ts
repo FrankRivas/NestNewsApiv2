@@ -6,14 +6,14 @@ import {
 } from '@nestjs/common';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { ShareDto } from '../dto/share.dto';
+import { SaveNewsDto } from '../dto/savenews.dto';
 
 @Injectable()
-export class ValidationSharePipe implements PipeTransform {
+export class ValidationSaveNewsPipe implements PipeTransform {
   async transform(
-    value: ShareDto,
+    value: SaveNewsDto,
     { metatype }: ArgumentMetadata,
-  ): Promise<ShareDto> {
+  ): Promise<SaveNewsDto> {
     if (!metatype) {
       return value;
     }
@@ -21,7 +21,7 @@ export class ValidationSharePipe implements PipeTransform {
 
     const errors = await validate(object);
     if (errors.length) {
-      throw new BadRequestException('Url and user are required fields');
+      throw new BadRequestException('Url is a required field');
     }
     return value;
   }

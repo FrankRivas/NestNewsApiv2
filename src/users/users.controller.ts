@@ -5,21 +5,20 @@ import {
   UsePipes,
   Get,
   UseGuards,
-  Req,
   Param,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UserDto } from './dto/users.dto';
-import { ValidationUserPipe } from './pipes/users.pipe';
 import { RegisterDto } from '../users/dto/register.dto';
 import { ValidationRegisterPipe } from './pipes/register.pipe';
 import { Users } from './entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../auth/auth.service';
-import { Request } from 'express';
 import { UserNewsService } from './usernews.service';
 import { ShareDto } from './dto/share.dto';
 import { ValidationSharePipe } from './pipes/share.pipe';
+import { UserDto } from './dto/users.dto';
+import { SaveNewsDto } from './dto/savenews.dto';
+import { ValidationSaveNewsPipe } from './pipes/savenews.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -28,19 +27,6 @@ export class UsersController {
     private readonly authService: AuthService,
     private readonly userNewService: UserNewsService,
   ) {}
-  /*@Post()
-  @UsePipes(ValidationUserPipe)
-  login(@Body() user: UserDto): {} {
-    const accessToken = this.userService.login(user);
-    return {
-      accessToken,
-    };
-  }*/
-  /*@UseGuards(AuthGuard('jwt'))
-  @Get()
-  findAll(): void {
-    this.userService.findAll();
-  }*/
 
   @Post('/signup')
   @UsePipes(ValidationRegisterPipe)
@@ -49,16 +35,16 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard('local'))
-  @Post('/singin')
-  async singin(@Req() req: Request): Promise<{}> {
-    return this.authService.login(req.user);
+  @Post('/signin')
+  async signin(@Body() user: UserDto): Promise<{}> {
+    return this.authService.login(user);
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @UsePipes(ValidationSharePipe)
+  @UsePipes(ValidationSaveNewsPipe)
   @Post('/:userId/save')
   async save(
-    @Body() article: ShareDto,
+    @Body() article: SaveNewsDto,
     @Param('userId') userId: number,
   ): Promise<{}> {
     return this.userNewService.saveArticle(article.url, userId);
@@ -77,6 +63,6 @@ export class UsersController {
     @Body() article: ShareDto,
     @Param('userId') userId: number,
   ): Promise<{}> {
-    return this.userNewService.saveArticle(article.url, userId, article.user);
+    return this.userNewService.saveArticle(article.url, article.user, userId);
   }
 }
