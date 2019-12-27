@@ -12,9 +12,6 @@
 - npm v6.12.1
 - pgadmin4
 - postgresql 11
-- restore the backup
-- configure .env file
-- configure ormconfg.json
 
 ## Installation
 
@@ -30,7 +27,11 @@ $ git clone https://github.com/FrankRivas/NestNewsApiv2
 $ npm install
 ```
 
-- Configure .env file
+- Restore the database backup
+
+- Configure .env file on the root directory of the project
+
+- Configure ormconfig.json file on the root directory of the project
 
 ## Configuring .env File
 
@@ -65,6 +66,8 @@ GUARDIAN_KEY=[Your secret newsapi key]
 SECRET_CODE_JWT=[Your secret token]
 
 ## Configuring ormconfig.json File
+
+### ormconfig.json example file
 
 {
 "type": "postgres",
@@ -109,7 +112,7 @@ $ npm run test:cov
 
 ## Getting token
 
-In order to access the token generation functionality for querying the api of the guardian news, a file with valid users has been incorporated, which can be consulted in the path src / users / collections
+In order to generate a token, you can use users from the database or create a new user
 
 ## Documentation
 
