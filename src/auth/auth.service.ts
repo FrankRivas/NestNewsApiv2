@@ -3,7 +3,6 @@ import {
   UnauthorizedException,
   HttpException,
 } from '@nestjs/common';
-import { RegistredUsers } from 'src/users/collections/users';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -22,7 +21,7 @@ export class AuthService {
     try {
       userDB = await this.userRepository.findOne({
         where: [{ username: username }],
-      }); //const userDB = RegistredUsers.find(a => a.username === username);
+      });
     } catch (error) {
       throw new HttpException('', error);
     }
@@ -45,14 +44,8 @@ export class AuthService {
       // If user does not exist
       throw new UnauthorizedException('Wrong Credentials');
     }
-    /*
-    const user = await this.usersService.findOne(username);
-    if (user && user.password === pass) {
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;*/
   }
+
   login(user: any): {} {
     const payload = { username: user.username, sub: user.userId };
     return {

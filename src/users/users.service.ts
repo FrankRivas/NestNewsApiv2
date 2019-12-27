@@ -3,9 +3,8 @@ import {
   UnauthorizedException,
   HttpException,
 } from '@nestjs/common';
-import { User } from './interfaces/users';
+//import { User } from './interfaces/users';
 import * as jwt from 'jsonwebtoken';
-import { RegistredUsers } from './collections/users';
 import { ConfigService } from '@nestjs/config';
 import { Secret } from 'jsonwebtoken';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -21,7 +20,7 @@ export class UsersService {
     @InjectRepository(Users)
     private readonly userRepository: Repository<Users>,
   ) {}
-  login(user: User): string {
+  /*login(user: User): string {
     const secretKey = this.configService.get<Secret>('SECRET_CODE_JWT');
     const userDB = RegistredUsers.find(a => a.username === user.username);
     if (userDB) {
@@ -41,7 +40,7 @@ export class UsersService {
   }
   findAll(): Promise<Users[]> {
     return this.userRepository.find();
-  }
+  }*/
   async singup(user: RegisterDto): Promise<Users> {
     try {
       user.password = await bcrypt.hash(user.password, 10);
